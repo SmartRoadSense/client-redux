@@ -1,0 +1,13 @@
+* -text
+
+*.cs eol=lf diff=csharp
+*.sln eol=crlf
+*.csproj eol=crlf
+*.shproj eol=crlf
+*.projitems eol=crlf
+*.resx eol=crlf
+*.config eol=crlf
+
+*.jpg -diff
+*.psd -diff
+*.png -diff

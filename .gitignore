@@ -1,0 +1,16 @@
+*.userprefs
+**/.metadata/**
+**/.recommenders/**
+**/.vs/**
+**/bin/**
+**/obj/**
+**/packages/**
+dbs/*
+*.suo
+*.csproj.user
+*.lock.json
+src/Android/Config\.json
+src/iOS/Config\.json
+src/Toolkit/Config\.json
+*.exe.config
+src/Android/Resources/Resource.designer.cs
