@@ -6,6 +6,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using static Android.OS.PowerManager;
 
 namespace SmartRoadSense.Redux.Droid {
     [Activity(
@@ -35,7 +36,27 @@ namespace SmartRoadSense.Redux.Droid {
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
+        WakeLock _wakeLock;
 
+        protected override void OnStart() {
+            base.OnStart();
+
+            if(_wakeLock is null) {
+                var context = this.ApplicationContext;
+                PowerManager powerManager = (PowerManager)context.GetSystemService(PowerService);
+                _wakeLock = powerManager.NewWakeLock(WakeLockFlags.Partial, "Sensing");
+                _wakeLock.Acquire();
+            }
+        }
+
+        protected override void OnStop() {
+            base.OnStop();
+
+            if(_wakeLock != null) {
+                _wakeLock.Release();
+                _wakeLock = null;
+            }
+        }
 
     }
 
