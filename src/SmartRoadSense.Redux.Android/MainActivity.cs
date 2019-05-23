@@ -7,19 +7,17 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 
-namespace SmartRoadSense.Redux.Droid
-{
+namespace SmartRoadSense.Redux.Droid {
     [Activity(
-        Label = "SmartRoadSense_Redux",
+        Label = "SmartRoadSense Redux",
         Icon = "@mipmap/icon",
         Theme = "@style/MainTheme",
         MainLauncher = true,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation
     )]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
-    {
-        protected override void OnCreate(Bundle savedInstanceState)
-        {
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity {
+
+        protected override void OnCreate(Bundle savedInstanceState) {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
@@ -30,11 +28,15 @@ namespace SmartRoadSense.Redux.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
         }
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
-        {
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults) {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+
+
+
     }
+
 }

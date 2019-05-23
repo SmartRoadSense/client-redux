@@ -5,14 +5,9 @@ using System.Runtime.CompilerServices;
 
 using Xamarin.Forms;
 
-using SmartRoadSense_Redux.Models;
-using SmartRoadSense_Redux.Services;
+namespace SmartRoadSense.Redux.ViewModels {
 
-namespace SmartRoadSense_Redux.ViewModels
-{
-    public class BaseViewModel : INotifyPropertyChanged
-    {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>() ?? new MockDataStore();
+    public class BaseViewModel : INotifyPropertyChanged {
 
         bool isBusy = false;
         public bool IsBusy {
@@ -28,9 +23,8 @@ namespace SmartRoadSense_Redux.ViewModels
 
         protected bool SetProperty<T>(ref T backingStore, T value,
             [CallerMemberName]string propertyName = "",
-            Action onChanged = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(backingStore, value))
+            Action onChanged = null) {
+            if(EqualityComparer<T>.Default.Equals(backingStore, value))
                 return false;
 
             backingStore = value;
@@ -40,15 +34,19 @@ namespace SmartRoadSense_Redux.ViewModels
         }
 
         #region INotifyPropertyChanged
+
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "") {
             var changed = PropertyChanged;
-            if (changed == null)
+            if(changed == null)
                 return;
 
             changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
         #endregion
+
     }
+
 }
