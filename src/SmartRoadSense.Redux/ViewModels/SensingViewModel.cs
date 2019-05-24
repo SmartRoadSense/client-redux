@@ -28,6 +28,10 @@ namespace SmartRoadSense.Redux.ViewModels {
             StopRecording = new Command(async () => await StopRecordingPerform());
 
             _timer = new Timer(TimerTick, null, Timeout.Infinite, Timeout.Infinite);
+
+            _accIntervals.NewCount += (sender, evt) => {
+                AccelerometerIntervalAverage = _accIntervals.LastAverage;
+            };
         }
 
         private readonly object _writerLock = new object();
@@ -72,6 +76,9 @@ namespace SmartRoadSense.Redux.ViewModels {
             if(IsRecording) {
                 return;
             }
+
+            _accIntervals.Reset();
+            _lastAccTimestamp = DateTime.MaxValue;
 
             string filename = "srs-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".csv";
             string filepath = Path.Combine(App.GetExternalRootPath(), filename);
@@ -158,10 +165,19 @@ namespace SmartRoadSense.Redux.ViewModels {
             _lastLocationUpdated = true;
         }
 
+        private AveragingBuffer _accIntervals = new AveragingBuffer();
+        private DateTime _lastAccTimestamp;
+
         private Vector3 _lastAccelerometerReading;
 
         private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e) {
             _lastAccelerometerReading = e.Reading.Acceleration;
+
+            var elapsed = DateTime.UtcNow - _lastAccTimestamp;
+            if(elapsed.Ticks > 0) {
+                _accIntervals.Add((int)elapsed.TotalMilliseconds);
+            }
+            _lastAccTimestamp = DateTime.UtcNow;
         }
 
         private Vector3 _lastGyroscopeReading;
@@ -187,6 +203,16 @@ namespace SmartRoadSense.Redux.ViewModels {
             }
             set {
                 SetProperty(ref _trackName, value);
+            }
+        }
+
+        double _accIntervalAverage;
+        public double AccelerometerIntervalAverage {
+            get {
+                return _accIntervalAverage;
+            }
+            set {
+                SetProperty(ref _accIntervalAverage, value);
             }
         }
 

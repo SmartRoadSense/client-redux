@@ -12,6 +12,7 @@
 
     <ContentPage.Resources>
         <conv:InvertBoolean x:Key="InvertBooleanConverter" />
+        <conv:MillisecondIntervalToHertz x:Key="MsIntervalToHzConverter" />
     </ContentPage.Resources>
 
     <ContentPage.BindingContext>
@@ -19,16 +20,28 @@
     </ContentPage.BindingContext>
 
     <ContentPage.Content>
-        <StackLayout Orientation="Vertical" Margin="10">
-            <Label HorizontalOptions="Start"
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <Label Grid.Row="0"
+                   HorizontalOptions="Start"
                    FontSize="Default"
-                   Text="Track identifier"
+                   Text="Track identifier:"
                    />
-            <Editor HorizontalOptions="Fill"
+            <Editor Grid.Row="1"
+                    HorizontalOptions="Fill"
                     Text="{Binding Path=TrackName}"
                     Margin="0,0,0,8"
                     />
-            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <Grid Grid.Row="2"
+                  HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand"
+                  >
                 <Button HorizontalOptions="Fill"
                         VerticalOptions="Fill"
                         Text="Start recording"
@@ -42,6 +55,41 @@
                         Command="{Binding Path=StopRecording}"
                         />
             </Grid>
-        </StackLayout>
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0"
+                       FontSize="Small"
+                       HorizontalTextAlignment="Start"
+                       >
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="Elapsed time:&#x0a;" />
+                                <Span Text="00:00:00" FontAttributes="Bold" />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <Label Grid.Column="1"
+                       FontSize="Small"
+                       HorizontalTextAlignment="End"
+                       >
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="Accelerometer frequency:&#x0a;" />
+                                <Span Text="{Binding Path=AccelerometerIntervalAverage, Converter={StaticResource MsIntervalToHzConverter}}" FontAttributes="Bold" />
+                                <Span Text=" (Hz)" />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </Grid>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>
