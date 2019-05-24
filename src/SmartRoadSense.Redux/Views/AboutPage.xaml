@@ -10,19 +10,19 @@
         <vm:AboutViewModel />
     </ContentPage.BindingContext>
     
-    <Grid>
+    <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Image Margin="10,16,10,16"
+        <Image Margin="0,16,0,0"
                Source="launcher_redux.png"
                HorizontalOptions="Fill"
                Aspect="AspectFit"
                HeightRequest="120"
                />
         <ScrollView Grid.Row="1">
-            <StackLayout Orientation="Vertical" Padding="10,16,10,16" Spacing="16">
+            <StackLayout Orientation="Vertical" Padding="0,16,0,0" Spacing="16">
                 <Label FontSize="22">
                     <Label.FormattedText>
                         <FormattedString>

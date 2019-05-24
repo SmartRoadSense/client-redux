@@ -13,6 +13,7 @@
     <ContentPage.Resources>
         <conv:InvertBoolean x:Key="InvertBooleanConverter" />
         <conv:MillisecondIntervalToHertz x:Key="MsIntervalToHzConverter" />
+        <conv:BooleanToRed x:Key="BooleanToRedConverter" />
     </ContentPage.Resources>
 
     <ContentPage.BindingContext>
@@ -20,8 +21,9 @@
     </ContentPage.BindingContext>
 
     <ContentPage.Content>
-        <Grid Margin="10">
+        <Grid Margin="16">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -38,7 +40,40 @@
                     Text="{Binding Path=TrackName}"
                     Margin="0,0,0,8"
                     />
-            <Grid Grid.Row="2"
+
+            <StackLayout Grid.Row="2"
+                         HorizontalOptions="Fill"
+                         Orientation="Horizontal"
+                         >
+                <Label Text="Frequency:"
+                       Margin="0,0,6,0"
+                       VerticalOptions="Center"
+                       BackgroundColor="{Binding Path=CannotKeepUp, Converter={StaticResource BooleanToRedConverter}}"
+                       />
+                <Stepper VerticalOptions="Center"
+                         Value="{Binding Path=SensingFrequency, Mode=TwoWay}"
+                         Minimum="50"
+                         Maximum="300"
+                         Increment="50"
+                         IsEnabled="{Binding Path=IsRecording, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}"
+                         />
+                <Label Margin="6,0,12,0"
+                       VerticalOptions="Center"
+                       FontSize="Small"
+                       BackgroundColor="{Binding Path=CannotKeepUp, Converter={StaticResource BooleanToRedConverter}}"
+                       >
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <FormattedString.Spans>
+                                <Span Text="{Binding Path=SensingFrequency, Mode=OneWay}" />
+                                <Span Text=" Hz" />
+                            </FormattedString.Spans>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </StackLayout>
+            
+            <Grid Grid.Row="3"
                   HorizontalOptions="FillAndExpand"
                   VerticalOptions="FillAndExpand"
                   >
@@ -55,7 +90,8 @@
                         Command="{Binding Path=StopRecording}"
                         />
             </Grid>
-            <Grid Grid.Row="3">
+            
+            <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
