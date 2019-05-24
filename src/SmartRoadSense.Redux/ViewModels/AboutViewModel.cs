@@ -4,7 +4,9 @@ using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace SmartRoadSense.Redux.ViewModels {
+
     public class AboutViewModel : BaseViewModel {
+
         public AboutViewModel() {
             Title = "About";
 
@@ -12,5 +14,7 @@ namespace SmartRoadSense.Redux.ViewModels {
         }
 
         public ICommand OpenWebCommand { get; }
+
     }
+
 }

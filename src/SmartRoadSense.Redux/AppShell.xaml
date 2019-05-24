@@ -72,7 +72,7 @@
     <!-- Your Pages -->
     <ShellItem>
         <ShellSection Title="Sensing" Icon="tab_feed.png">
-            <ShellContent ContentTemplate="{DataTemplate local:ItemsPage}" />
+            <ShellContent ContentTemplate="{DataTemplate local:SensingPage}" />
         </ShellSection>
         <ShellSection Title="About" Icon="tab_about.png">
             <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />

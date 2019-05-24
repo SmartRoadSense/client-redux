@@ -18,6 +18,12 @@ namespace SmartRoadSense.Redux.Droid {
     )]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity {
 
+        public MainActivity() {
+            App.GetExternalRootPath = () => {
+                return this.GetExternalFilesDir(null).AbsolutePath;
+            };
+        }
+
         protected override void OnCreate(Bundle savedInstanceState) {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
