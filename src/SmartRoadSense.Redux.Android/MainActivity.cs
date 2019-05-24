@@ -13,7 +13,7 @@ namespace SmartRoadSense.Redux.Droid {
 
     [Activity(
         Label = "SmartRoadSense Redux",
-        Icon = "@mipmap/icon",
+        Icon = "@drawable/launcher_redux",
         Theme = "@style/MainTheme",
         MainLauncher = true,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation
