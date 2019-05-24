@@ -2,11 +2,8 @@
 <Shell xmlns="http://xamarin.com/schemas/2014/forms" 
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
        xmlns:local="clr-namespace:SmartRoadSense.Redux.Views"
-       RouteHost="it.smartroadsense"
-       RouteScheme="app"
-       Route="redux"
-       FlyoutBehavior="Disabled"
        Title="SmartRoadSense"
+       FlyoutBehavior="Disabled"
        x:Class="SmartRoadSense.Redux.AppShell"
        >
 
@@ -48,33 +45,12 @@
         - David Ortinau, Senior Program Manager for Mobile Dev Tools [david.ortinau@microsoft.com]
     -->
 
-    <!-- 
-        Styles and Resources 
-    -->
-    <Shell.Resources>
-        <ResourceDictionary>
-            <Color x:Key="NavigationPrimary">#2A69FF</Color>
-            <Style x:Key="BaseStyle" TargetType="Element">
-                <Setter Property="Shell.ShellBackgroundColor" Value="{StaticResource NavigationPrimary}" />
-                <Setter Property="Shell.ShellForegroundColor" Value="White" />
-                <Setter Property="Shell.ShellTitleColor" Value="White" />
-                <Setter Property="Shell.ShellDisabledColor" Value="#B4FFFFFF" />
-                <Setter Property="Shell.ShellUnselectedColor" Value="#95FFFFFF" />
-                <Setter Property="Shell.ShellTabBarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
-                <Setter Property="Shell.ShellTabBarForegroundColor" Value="White"/>
-                <Setter Property="Shell.ShellTabBarUnselectedColor" Value="#95FFFFFF"/>
-                <Setter Property="Shell.ShellTabBarTitleColor" Value="White"/>
-            </Style>
-            <Style TargetType="ShellItem" BasedOn="{StaticResource BaseStyle}" />
-        </ResourceDictionary>
-    </Shell.Resources>
-
     <!-- Your Pages -->
     <ShellItem>
-        <ShellSection Title="Sensing" Icon="tab_feed.png">
+        <ShellSection Title="Sensing" Icon="tab_feed.png" Route="sensing">
             <ShellContent ContentTemplate="{DataTemplate local:SensingPage}" />
         </ShellSection>
-        <ShellSection Title="About" Icon="tab_about.png">
+        <ShellSection Title="About" Icon="tab_about.png" Route="about">
             <ShellContent ContentTemplate="{DataTemplate local:AboutPage}" />
         </ShellSection>
     </ShellItem>

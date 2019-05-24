@@ -6,7 +6,9 @@
              xmlns:conv="clr-namespace:SmartRoadSense.Redux.ValueConverters"
              xmlns:vm="clr-namespace:SmartRoadSense.Redux.ViewModels"
              mc:Ignorable="d"
-             x:Class="SmartRoadSense.Redux.Views.SensingPage">
+             x:Class="SmartRoadSense.Redux.Views.SensingPage"
+             Title="{Binding Title}"
+             >
 
     <ContentPage.Resources>
         <conv:InvertBoolean x:Key="InvertBooleanConverter" />
