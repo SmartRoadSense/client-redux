@@ -25,24 +25,48 @@ namespace SmartRoadSense.Redux.ViewModels {
             Title = "Sensing";
 
             StartRecording = new Command(async () => await StartRecordingPerform());
+            StopRecording = new Command(async () => await StopRecordingPerform());
 
             _timer = new Timer(TimerTick, null, Timeout.Infinite, Timeout.Infinite);
-
-            _geolocationRequest = new GeolocationRequest(GeolocationAccuracy.Best);
         }
 
-        private void TimerTick(object v) {
-            Debug.WriteLine("Timer ticked");
+        private readonly object _writerLock = new object();
+        private volatile bool _skipWriting = false;
 
-            _writer.WriteLine("{0},{1:F3},{2:F3},{3:F3},{4:F3},{5:F3},{6:F3},{7:F4},{8:F4}",
-                DateTime.UtcNow.Ticks,
-                _lastAccelerometerReading.X, _lastAccelerometerReading.Y, _lastAccelerometerReading.Z,
-                _lastGyroscopeReading.X, _lastGyroscopeReading.Y, _lastGyroscopeReading.Z,
-                _lastLocation.Latitude, _lastLocation.Longitude
-            );
+        private CancellationTokenSource _locationCancellationSource;
+
+        private void TimerTick(object v) {
+            // Debug.WriteLine("Timer ticked");
+
+            if(_skipWriting) {
+                return;
+            }
+
+            lock(_writerLock) {
+                _writer.Write(string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0},{1:F3},{2:F3},{3:F3},{4:F3},{5:F3},{6:F3},",
+                    DateTime.UtcNow.Ticks,
+                    _lastAccelerometerReading.X, _lastAccelerometerReading.Y, _lastAccelerometerReading.Z,
+                    _lastGyroscopeReading.X, _lastGyroscopeReading.Y, _lastGyroscopeReading.Z
+                ));
+
+                if(_lastLocationUpdated) {
+                    _writer.Write(string.Format(
+                        CultureInfo.InvariantCulture,
+                        "{0:F4},{1:F4},",
+                        _lastLocationLatitude, _lastLocationLongitude
+                    ));
+                    _lastLocationUpdated = false;
+                }
+
+                _writer.WriteLine();
+            }
         }
 
         public ICommand StartRecording { get; }
+
+        public ICommand StopRecording { get; }
 
         private async Task StartRecordingPerform() {
             if(IsRecording) {
@@ -58,15 +82,18 @@ namespace SmartRoadSense.Redux.ViewModels {
             await _writer.WriteLineAsync("Ticks,AccX,AccY,AccZ,GyrX,GyrY,GyrZ,Lat,Lng");
             await _writer.FlushAsync();
 
-            _lastLocation = await Geolocation.GetLastKnownLocationAsync();
-
             Accelerometer.Start(SensorSpeed.Fastest);
             Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
 
             Gyroscope.Start(SensorSpeed.Fastest);
             Gyroscope.ReadingChanged += Gyroscope_ReadingChanged;
 
+            HandleLocation(await Geolocation.GetLastKnownLocationAsync());
             ScheduleGeolocationRequest();
+
+            _timer.Change(TimerIntervalMs, TimerIntervalMs);
+
+            IsRecording = true;
         }
 
         private async Task StopRecordingPerform() {
@@ -74,30 +101,61 @@ namespace SmartRoadSense.Redux.ViewModels {
                 return;
             }
 
+            _skipWriting = true;
+
+            _timer.Change(Timeout.Infinite, Timeout.Infinite);
+
             Accelerometer.ReadingChanged -= Accelerometer_ReadingChanged;
             Accelerometer.Stop();
 
             Gyroscope.ReadingChanged -= Gyroscope_ReadingChanged;
             Gyroscope.Stop();
 
+            if(_locationCancellationSource != null) {
+                _locationCancellationSource.Cancel();
+                _locationCancellationSource.Dispose();
+                _locationCancellationSource = null;
+            }
+
+            // Close up and bundle up the writer
             await _writer.FlushAsync();
-            _writer.Dispose();
-            _writer = null;
+            lock(_writerLock) {
+                _writer.Dispose();
+                _writer = null;
+            }
 
             IsRecording = false;
+
+            _skipWriting = false;
         }
 
-        private readonly GeolocationRequest _geolocationRequest;
-        private Location _lastLocation;
+        private double _lastLocationLatitude, _lastLocationLongitude;
+        private readonly GeolocationRequest _geolocationRequest = new GeolocationRequest(GeolocationAccuracy.Best);
 
         private void ScheduleGeolocationRequest() {
-            Task.Run(() => {
-                Geolocation.GetLocationAsync(_geolocationRequest).ContinueWith(t => {
-                    Debug.WriteLine("Location update: {0:F2},{1:F2} acc {2:F2}", t.Result.Latitude, t.Result.Longitude, t.Result.Accuracy);
-                    _lastLocation = t.Result;
-                });
-                ScheduleGeolocationRequest();
-            });
+            _locationCancellationSource = new CancellationTokenSource();
+            var token = _locationCancellationSource.Token;
+            Task.Factory.StartNew(async () => {
+                while(true) {
+                    if(token.IsCancellationRequested) {
+                        Debug.WriteLine("Location access canceled, terminating");
+                        break;
+                    }
+
+                    Debug.WriteLine("Querying location...");
+                    HandleLocation(await Geolocation.GetLocationAsync(_geolocationRequest));
+                }
+            }, token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
+        }
+
+        private volatile bool _lastLocationUpdated = false;
+
+        private void HandleLocation(Location l) {
+            Debug.WriteLine("Location update: {0:F2},{1:F2} acc {2:F2}", l.Latitude, l.Longitude, l.Accuracy);
+            _lastLocationLatitude = l.Latitude;
+            _lastLocationLongitude = l.Longitude;
+
+            _lastLocationUpdated = true;
         }
 
         private Vector3 _lastAccelerometerReading;

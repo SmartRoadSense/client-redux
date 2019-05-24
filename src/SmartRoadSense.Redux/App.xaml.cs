@@ -26,7 +26,7 @@ namespace SmartRoadSense.Redux {
             // Handle when your app resumes
         }
 
-        public static Func<string> GetExternalRootPath { get; set; }
+        public static Func<string> GetExternalRootPath;
 
     }
 

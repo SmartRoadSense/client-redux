@@ -8,7 +8,6 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace SmartRoadSense.Redux.Views {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SensingPage : ContentPage {
         public SensingPage() {
             InitializeComponent();

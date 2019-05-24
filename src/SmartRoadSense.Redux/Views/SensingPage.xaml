@@ -3,13 +3,43 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:conv="clr-namespace:SmartRoadSense.Redux.ValueConverters"
+             xmlns:vm="clr-namespace:SmartRoadSense.Redux.ViewModels"
              mc:Ignorable="d"
              x:Class="SmartRoadSense.Redux.Views.SensingPage">
+
+    <ContentPage.Resources>
+        <conv:InvertBoolean x:Key="InvertBooleanConverter" />
+    </ContentPage.Resources>
+
+    <ContentPage.BindingContext>
+        <vm:SensingViewModel />
+    </ContentPage.BindingContext>
+
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+        <StackLayout Orientation="Vertical" Margin="10">
+            <Label HorizontalOptions="Start"
+                   FontSize="Default"
+                   Text="Track identifier"
+                   />
+            <Editor HorizontalOptions="Fill"
+                    Text="{Binding Path=TrackName}"
+                    Margin="0,0,0,8"
+                    />
+            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <Button HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        Text="Start recording"
+                        IsVisible="{Binding Path=IsRecording, Converter={StaticResource InvertBooleanConverter}}"
+                        Command="{Binding Path=StartRecording}"
+                        />
+                <Button HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        Text="Stop recording"
+                        IsVisible="{Binding Path=IsRecording}"
+                        Command="{Binding Path=StopRecording}"
+                        />
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
