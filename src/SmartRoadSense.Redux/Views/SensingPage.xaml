@@ -33,12 +33,13 @@
             <Label Grid.Row="0"
                    HorizontalOptions="Start"
                    FontSize="Default"
-                   Text="Track identifier:"
+                   Text="Track:"
                    />
             <Editor Grid.Row="1"
                     HorizontalOptions="Fill"
                     Text="{Binding Path=TrackName}"
                     Margin="0,0,0,8"
+                    Placeholder="Number or string identifier"
                     />
 
             <StackLayout Grid.Row="2"
@@ -57,8 +58,7 @@
                          Increment="50"
                          IsEnabled="{Binding Path=IsRecording, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}"
                          />
-                <Label Margin="6,0,12,0"
-                       VerticalOptions="Center"
+                <Label VerticalOptions="Center"
                        FontSize="Small"
                        BackgroundColor="{Binding Path=CannotKeepUp, Converter={StaticResource BooleanToRedConverter}}"
                        >
