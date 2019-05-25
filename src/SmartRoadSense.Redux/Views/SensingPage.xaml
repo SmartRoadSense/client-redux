@@ -105,7 +105,7 @@
                         <FormattedString>
                             <FormattedString.Spans>
                                 <Span Text="Elapsed time:&#x0a;" />
-                                <Span Text="00:00:00" FontAttributes="Bold" />
+                                <Span Text="{Binding Path=ElapsedTime, StringFormat='{0:c}'}" FontAttributes="Bold" />
                             </FormattedString.Spans>
                         </FormattedString>
                     </Label.FormattedText>

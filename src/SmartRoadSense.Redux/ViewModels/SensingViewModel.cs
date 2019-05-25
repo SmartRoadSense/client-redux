@@ -44,6 +44,8 @@ namespace SmartRoadSense.Redux.ViewModels {
         private int _toleratedTimerIntervalMs;
         private const double ToleranceIntervalMultiplier = 1.5;
 
+        private int _secondCounter = 0;
+
         private void TimerTick(object v) {
             // Debug.WriteLine("Timer ticked");
 
@@ -77,6 +79,12 @@ namespace SmartRoadSense.Redux.ViewModels {
 
                 _writer.WriteLine();
             }
+
+            // Recount elapsed time approx. every second
+            if(_secondCounter-- < 0) {
+                ElapsedTime = TimeSpan.FromSeconds(Math.Floor(DateTime.UtcNow.Subtract(_startTime).TotalSeconds));
+                _secondCounter = TimerFrequencyHz;
+            }
         }
 
         public ICommand StartRecording { get; }
@@ -94,6 +102,9 @@ namespace SmartRoadSense.Redux.ViewModels {
 
             string filename = "srs-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".csv";
             string filepath = Path.Combine(App.GetExternalRootPath(), filename);
+            ElapsedTime = TimeSpan.Zero;
+            _startTime = DateTime.UtcNow;
+
             _writer = new StreamWriter(new FileStream(filepath, FileMode.CreateNew));
 
             await _writer.WriteLineAsync(string.Format("# Start time (local): {0:G}", DateTime.Now));
@@ -250,6 +261,17 @@ namespace SmartRoadSense.Redux.ViewModels {
             }
             set {
                 SetProperty(ref _cannotKeepUp, value);
+            }
+        }
+
+        DateTime _startTime;
+        TimeSpan _elapsed = TimeSpan.Zero;
+        public TimeSpan ElapsedTime {
+            get {
+                return _elapsed;
+            }
+            set {
+                SetProperty(ref _elapsed, value);
             }
         }
 
