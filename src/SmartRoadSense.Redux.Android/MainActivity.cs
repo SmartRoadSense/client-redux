@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Android;
 using Android.App;
 using Android.Content.PM;
@@ -42,10 +43,10 @@ namespace SmartRoadSense.Redux.Droid {
             LoadApplication(new App());
         }
 
-        public const int PermissionRequestLocation = 1212;
+        public const int PermissionRequestCombo = 1212;
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults) {
-            if(requestCode == PermissionRequestLocation) {
+            if(requestCode == PermissionRequestCombo) {
                 var index = Array.IndexOf<string>(permissions, Manifest.Permission.AccessFineLocation);
                 if(index >= 0) {
                     if(grantResults[index] == Permission.Granted) {
@@ -66,7 +67,12 @@ namespace SmartRoadSense.Redux.Droid {
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-        WakeLock _wakeLock;
+        private WakeLock _wakeLock;
+
+        private readonly string[] RequiredPermissions = new string[] {
+            Manifest.Permission.AccessFineLocation,
+            Manifest.Permission.RecordAudio
+        };
 
         protected override void OnStart() {
             base.OnStart();
@@ -79,12 +85,10 @@ namespace SmartRoadSense.Redux.Droid {
             }
 
             if(Build.VERSION.SdkInt >= BuildVersionCodes.M) {
-                if(ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) != global::Android.Content.PM.Permission.Granted) {
-                    RequestPermissions(new string[] {
-                        Manifest.Permission.AccessFineLocation
-                    }, PermissionRequestLocation);
-
-                    return;
+                if(RequiredPermissions.Any(p => {
+                    return ContextCompat.CheckSelfPermission(this, p) != Permission.Granted;
+                })) {
+                    RequestPermissions(RequiredPermissions, PermissionRequestCombo);
                 }
             }
         }
