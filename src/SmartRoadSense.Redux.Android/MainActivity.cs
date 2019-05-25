@@ -8,6 +8,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.Content;
 using Android.Widget;
+using Plugin.AudioRecorder;
 using static Android.OS.PowerManager;
 
 namespace SmartRoadSense.Redux.Droid {
@@ -25,15 +26,32 @@ namespace SmartRoadSense.Redux.Droid {
             
         }
 
+        private AudioRecorderService _audioRecorder;
+
         protected override void OnCreate(Bundle savedInstanceState) {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
+
+            _audioRecorder = new AudioRecorderService {
+                StopRecordingAfterTimeout = false,
+                StopRecordingOnSilence = false
+            };
 
             base.OnCreate(savedInstanceState);
 
             // Init platform stuff
             App.GetExternalRootPath = () => {
                 return this.GetExternalFilesDir(null).AbsolutePath;
+            };
+            App.StartAudioRecording = async (filepath) => {
+                _audioRecorder.FilePath = filepath;
+                await _audioRecorder.StartRecording();
+            };
+            App.StopAudioRecording = async () => {
+                if(!_audioRecorder.IsRecording) {
+                    return;
+                }
+                await _audioRecorder.StopRecording();
             };
 
             // Init Xamarin.Forms

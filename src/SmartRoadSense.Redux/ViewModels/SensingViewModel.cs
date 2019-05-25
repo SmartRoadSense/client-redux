@@ -100,11 +100,11 @@ namespace SmartRoadSense.Redux.ViewModels {
             _lastAccTimestamp = DateTime.MaxValue;
             _lastTickTimestamp = DateTime.MaxValue;
 
-            string filename = "srs-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".csv";
-            string filepath = Path.Combine(App.GetExternalRootPath(), filename);
             ElapsedTime = TimeSpan.Zero;
             _startTime = DateTime.UtcNow;
 
+            string filename = "srs-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
+            string filepath = Path.Combine(App.GetExternalRootPath(), filename + ".csv");
             _writer = new StreamWriter(new FileStream(filepath, FileMode.CreateNew));
 
             await _writer.WriteLineAsync(string.Format("# Start time (local): {0:G}", DateTime.Now));
@@ -127,6 +127,11 @@ namespace SmartRoadSense.Redux.ViewModels {
             _timer.Change(_expectedTimerIntervalMs, _expectedTimerIntervalMs);
             Debug.WriteLine(string.Format("Starting timer with {0} ms interval, tolerance {1} ms",
                 _expectedTimerIntervalMs, _toleratedTimerIntervalMs));
+
+            if(RecordAudio) {
+                string audioFilepath = Path.Combine(App.GetExternalRootPath(), filename + ".wav");
+                await App.StartAudioRecording(audioFilepath);
+            }
 
             IsRecording = true;
         }
@@ -158,6 +163,8 @@ namespace SmartRoadSense.Redux.ViewModels {
                 _writer.Dispose();
                 _writer = null;
             }
+
+            await App.StopAudioRecording();
 
             IsRecording = false;
 
@@ -261,6 +268,16 @@ namespace SmartRoadSense.Redux.ViewModels {
             }
             set {
                 SetProperty(ref _cannotKeepUp, value);
+            }
+        }
+
+        bool _recordAudio = false;
+        public bool RecordAudio {
+            get {
+                return _recordAudio;
+            }
+            set {
+                SetProperty(ref _recordAudio, value);
             }
         }
 

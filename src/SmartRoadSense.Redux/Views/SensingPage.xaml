@@ -26,6 +26,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -72,8 +73,19 @@
                     </Label.FormattedText>
                 </Label>
             </StackLayout>
+
+            <StackLayout Grid.Row="3"
+                         HorizontalOptions="Fill"
+                         Orientation="Horizontal">
+                <Label Text="Record microphone:"
+                       />
+                <Switch IsToggled="{Binding Path=RecordAudio}"
+                        />
+                <Label Text="(Experimental)"
+                       />
+            </StackLayout>
             
-            <Grid Grid.Row="3"
+            <Grid Grid.Row="4"
                   HorizontalOptions="FillAndExpand"
                   VerticalOptions="FillAndExpand"
                   >
@@ -91,7 +103,7 @@
                         />
             </Grid>
             
-            <Grid Grid.Row="4">
+            <Grid Grid.Row="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />

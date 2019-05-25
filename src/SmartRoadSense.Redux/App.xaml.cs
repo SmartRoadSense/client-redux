@@ -1,7 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-using SmartRoadSense.Redux.Views;
 
 namespace SmartRoadSense.Redux {
 
@@ -27,6 +26,9 @@ namespace SmartRoadSense.Redux {
         }
 
         public static Func<string> GetExternalRootPath;
+
+        public static Func<string, Task> StartAudioRecording;
+        public static Func<Task> StopAudioRecording;
 
     }
 
