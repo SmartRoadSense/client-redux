@@ -3,7 +3,6 @@ using System.Linq;
 using Android;
 using Android.App;
 using Android.Content.PM;
-using Android.Locations;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.Content;

@@ -17,7 +17,6 @@ namespace SmartRoadSense.Redux.ViewModels {
 
         private readonly Timer _timer;
         private const int TimerFrequencyHz = 100;
-        private const int TimerIntervalMs = (int)(1000.0 / TimerFrequencyHz);
 
         private StreamWriter _writer;
 
@@ -91,6 +90,8 @@ namespace SmartRoadSense.Redux.ViewModels {
 
         public ICommand StopRecording { get; }
 
+        private bool _gyroscopeIsSensing = false;
+
         private async Task StartRecordingPerform() {
             if(IsRecording) {
                 return;
@@ -116,8 +117,15 @@ namespace SmartRoadSense.Redux.ViewModels {
             Accelerometer.Start(SensorSpeed.Fastest);
             Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
 
-            Gyroscope.Start(SensorSpeed.Fastest);
-            Gyroscope.ReadingChanged += Gyroscope_ReadingChanged;
+            try {
+                Gyroscope.Start(SensorSpeed.Fastest);
+                Gyroscope.ReadingChanged += Gyroscope_ReadingChanged;
+                _gyroscopeIsSensing = true;
+            }
+            catch(NotSupportedException) {
+                Debug.WriteLine("Gyroscope not supported");
+                _gyroscopeIsSensing = false;
+            }
 
             HandleLocation(await Geolocation.GetLastKnownLocationAsync());
             ScheduleGeolocationRequest();
@@ -148,8 +156,10 @@ namespace SmartRoadSense.Redux.ViewModels {
             Accelerometer.ReadingChanged -= Accelerometer_ReadingChanged;
             Accelerometer.Stop();
 
-            Gyroscope.ReadingChanged -= Gyroscope_ReadingChanged;
-            Gyroscope.Stop();
+            if(_gyroscopeIsSensing) {
+                Gyroscope.ReadingChanged -= Gyroscope_ReadingChanged;
+                Gyroscope.Stop();
+            }
 
             if(_locationCancellationSource != null) {
                 _locationCancellationSource.Cancel();
