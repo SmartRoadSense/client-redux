@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 
 namespace SmartRoadSense.Redux {
@@ -15,6 +17,14 @@ namespace SmartRoadSense.Redux {
 
         protected override void OnStart() {
             // Handle when your app starts
+
+#if !DEBUG
+            Microsoft.AppCenter.AppCenter.Start("android=b756ec60-114f-447e-89f9-da1acb6ff6b2;"
+                                           // + "uwp={Your UWP App secret here};"
+                                           // + "ios={Your iOS App secret here}",
+                                                , typeof(Analytics), typeof(Crashes)
+            );
+#endif
         }
 
         protected override void OnSleep() {

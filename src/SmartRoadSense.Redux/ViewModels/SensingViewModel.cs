@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.AppCenter.Analytics;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -141,6 +142,10 @@ namespace SmartRoadSense.Redux.ViewModels {
                 await App.StartAudioRecording(audioFilepath);
             }
 
+#if !DEBUG
+            Analytics.TrackEvent("Recording.Start");
+#endif
+
             IsRecording = true;
         }
 
@@ -175,6 +180,10 @@ namespace SmartRoadSense.Redux.ViewModels {
             }
 
             await App.StopAudioRecording();
+
+#if !DEBUG
+            Analytics.TrackEvent("Recording.Stop");
+#endif
 
             IsRecording = false;
 
