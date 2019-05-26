@@ -41,6 +41,7 @@
                     Text="{Binding Path=TrackName}"
                     Margin="0,0,0,8"
                     Placeholder="Number or string identifier"
+                    IsEnabled="{Binding Path=IsRecording, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}"
                     />
 
             <StackLayout Grid.Row="2"
@@ -80,6 +81,7 @@
                 <Label Text="Record microphone:"
                        />
                 <Switch IsToggled="{Binding Path=RecordAudio}"
+                        IsEnabled="{Binding Path=IsRecording, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}"
                         />
                 <Label Text="(Experimental)"
                        />
