@@ -112,6 +112,7 @@ namespace SmartRoadSense.Redux.ViewModels {
             await _writer.WriteLineAsync(string.Format("# Start time (local): {0:G}", DateTime.Now));
             await _writer.WriteLineAsync(string.Format("# Track name: {0}", TrackName));
             await _writer.WriteLineAsync(string.Format("# Sampling frequency: {0} Hz", SensingFrequency));
+            await _writer.WriteLineAsync(string.Format("# Platform: {0}", App.GeneratePlatformDetails()));
             await _writer.WriteLineAsync("Ticks,AccX,AccY,AccZ,GyrX,GyrY,GyrZ,Lat,Lng");
             await _writer.FlushAsync();
 

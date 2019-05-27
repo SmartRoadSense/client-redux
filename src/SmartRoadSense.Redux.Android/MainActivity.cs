@@ -27,6 +27,8 @@ namespace SmartRoadSense.Redux.Droid {
 
         private AudioRecorderService _audioRecorder;
 
+        private string _platformDetails = null;
+
         protected override void OnCreate(Bundle savedInstanceState) {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
@@ -52,12 +54,50 @@ namespace SmartRoadSense.Redux.Droid {
                 }
                 await _audioRecorder.StopRecording();
             };
+            App.GeneratePlatformDetails = () => {
+                if(_platformDetails == null) {
+                    GeneratePlatformDetails();
+                }
+                return _platformDetails;
+            };
 
             // Init Xamarin.Forms
             global::Xamarin.Forms.Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
+
+            Task.Run(() => { GeneratePlatformDetails(); });
+        }
+
+        private string GetApplicationVersion() {
+            PackageInfo package;
+            try {
+                package = ApplicationContext.PackageManager.GetPackageInfo(ApplicationContext.PackageName, 0);
+                return package.VersionName;
+            }
+            catch(PackageManager.NameNotFoundException exNotFound) {
+                Microsoft.AppCenter.Crashes.Crashes.TrackError(exNotFound);
+                return "AppNotFound";
+            }
+            catch(Exception ex) {
+                Microsoft.AppCenter.Crashes.Crashes.TrackError(ex);
+                return "AppNotInstalled";
+            }
+        }
+
+        private void GeneratePlatformDetails() {
+            var appVersion = GetApplicationVersion();
+            var androidRelease = Build.VERSION.Release ?? "Unknown version";
+            var androidSdk = Build.VERSION.SdkInt;
+            var deviceManufacturer = Build.Manufacturer.ToTitleCase();
+            var deviceModel = Build.Model.ToTitleCase();
+
+            _platformDetails = string.Format("SmartRoadSense.Redux v{0} on Android {1} (SDK {2}), running on {3} {4}",
+                appVersion, androidRelease, androidSdk, deviceManufacturer, deviceModel
+            );
+
+            System.Diagnostics.Debug.WriteLine("Platform: " + _platformDetails);
         }
 
         public const int PermissionRequestCombo = 1212;

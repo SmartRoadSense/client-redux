@@ -40,6 +40,8 @@ namespace SmartRoadSense.Redux {
         public static Func<string, Task> StartAudioRecording;
         public static Func<Task> StopAudioRecording;
 
+        public static Func<string> GeneratePlatformDetails;
+
     }
 
 }
