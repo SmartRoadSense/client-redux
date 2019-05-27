@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Android;
 using Android.App;
 using Android.Content.PM;
@@ -8,7 +9,6 @@ using Android.Runtime;
 using Android.Support.V4.Content;
 using Android.Widget;
 using Plugin.AudioRecorder;
-using static Android.OS.PowerManager;
 
 namespace SmartRoadSense.Redux.Droid {
 
@@ -71,10 +71,10 @@ namespace SmartRoadSense.Redux.Droid {
                         Toast.MakeText(this, "Location access granted", ToastLength.Short).Show();
                         return;
                     }
-                }
 
-                System.Diagnostics.Debug.WriteLine("Location access not granted");
-                Toast.MakeText(this, "Location access denied, application will not collect GPS data", ToastLength.Long).Show();
+                    System.Diagnostics.Debug.WriteLine("Location access not granted");
+                    Toast.MakeText(this, "Location access denied, application will not collect GPS data", ToastLength.Long).Show();
+                }
 
                 return;
             }
@@ -84,7 +84,7 @@ namespace SmartRoadSense.Redux.Droid {
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-        private WakeLock _wakeLock;
+        private PowerManager.WakeLock _wakeLock;
 
         private readonly string[] RequiredPermissions = new string[] {
             Manifest.Permission.AccessFineLocation,
